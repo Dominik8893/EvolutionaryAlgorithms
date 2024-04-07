@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 xmax = 10
-n = 3
+n = 2
 
 Resolution = 500
 
@@ -55,7 +55,7 @@ def optimize( dim, num_particles, max_iter):
     global_best_position = None
     global_best_value = float('-inf')
 
-    for _ in range(max_iter):
+    for Iteration in range(max_iter):
 
         print(global_best_value)
 
@@ -75,14 +75,14 @@ def optimize( dim, num_particles, max_iter):
 
         # Update velocities and positions
         for particle in particles:
-            inertia_weight = 0.729
-            cognitive_weight = 1.49445
-            social_weight = 1.49445
+            inertia_weight = 1
+            cognitive_weight = 1.5
+            social_weight = 1.5
 
             # Update velocity
-            particle.velocity = (inertia_weight * particle.velocity +
-                                 cognitive_weight * np.random.rand(dim) * (particle.best_position - particle.position) +
-                                 social_weight * np.random.rand(dim) * (global_best_position - particle.position))
+            particle.velocity = (inertia_weight/(Iteration+1) * particle.velocity +
+                                 cognitive_weight * np.random.rand(dim) * (particle.best_position - particle.position)
+                                 + social_weight * np.random.rand(dim) * (global_best_position - particle.position))
 
             # Update position
             particle.position += particle.velocity
@@ -93,6 +93,8 @@ def optimize( dim, num_particles, max_iter):
     return global_best_position, global_best_value
 
 
+
+## this fragment is just used to create an approximate plot of the function
 
 for i in range (0, Resolution):
     for j in range(0, Resolution):
@@ -124,7 +126,7 @@ ax.set_title('3D Plot')
 
 optimal_position, optimal_value = optimize( n, 50, 500)
 
-ax.scatter(optimal_position[0], optimal_position[1], optimal_value, color='red', s=10)
+ax.scatter(optimal_position[0], optimal_position[1], optimal_value, color='red', s=100)
 
 print(optimal_value, optimal_position)
 # Show the plot
