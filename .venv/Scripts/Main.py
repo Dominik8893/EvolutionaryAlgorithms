@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Cities coordinates
 c1_x = np.array([0, 3, 6, 7, 15, 12, 14, 9, 7, 0])
@@ -22,7 +23,8 @@ Size = 250
 ParentSelectionAmount = 0.2
 IterationAmount = 50
 
-
+SelectedCityX = c4_x
+SelectedCityY = c4_y
 
 
 # Function to calculate distance between 2 points
@@ -31,8 +33,8 @@ def DistanceBetweenCities(x1, y1, x2, y2):
 
 # Function to calculate distance for the entire Path
 def TourDistance(Path):
-    CitiesX = c4_x
-    CitiesY = c4_y
+    CitiesX = SelectedCityX
+    CitiesY = SelectedCityY
     TotalDistance = 0
     for i in range(len(Path)):
         if i == len(Path) - 1:
@@ -90,21 +92,22 @@ def Mutate(ElementToBeMutated):
 
 
 # Initialize population
-Population = np.zeros((Size, 10),dtype = int )
-Distances = np.zeros(Size)
+Population = np.zeros((Size, 10), dtype = int )
 
 # Generate random population
 for i in range(Size):
     random_arr = np.random.permutation(10)
     Population[i, :] = random_arr
-    Distances[i] = TourDistance(Population[i])
+
+BestDistance = 9999999.9;
 
 for j in range(IterationAmount):
-    SelectedParents = np.zeros((round(Size*ParentSelectionAmount), 10),dtype = int )
+
+    SelectedParents = np.zeros((round(Size*ParentSelectionAmount), 10), dtype = int )
     for i in range(round(Size*ParentSelectionAmount)):
         SelectedParents[i] = Population[i]
 
-    Children = np.zeros((round(Size*ParentSelectionAmount), 10),dtype = int )
+    Children = np.zeros((round(Size*ParentSelectionAmount), 10), dtype = int )
     for i in range(round((Size*ParentSelectionAmount)/2)):
 
         Parent1 = SelectedParents[np.random.choice(SelectedParents.shape[0])]
@@ -125,9 +128,38 @@ for j in range(IterationAmount):
     #cutting off excess population
     Population = Population[:Size]
 
-    print("Best Paren in " + str(j) + "  " + str(TourDistance(Population[0])))
+    print(str(BestDistance) +" "+ str(j))
 
 
+    BestDistance = TourDistance(Population[0])
+
+
+print("Best Path for " + str(Population[0]) + " with distance  " + str(BestDistance))
+
+TempX = np.zeros((11), dtype = int )
+TempY = np.zeros((11), dtype = int )
+
+j = 0
+for i in Population[0]:
+   TempX[j] = SelectedCityX[i]
+   TempY[j] = SelectedCityY[i]
+   j = j+1
+
+TempX[10] = TempX[0]
+TempY[10] = TempY[0]
+
+
+#plotting result
+plt.plot(TempX, TempY, marker='o', linestyle='-')
+
+# Add labels and title
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Best Route between Cities')
+
+# Show the plot
+plt.grid(True)
+plt.show()
 
 
 
